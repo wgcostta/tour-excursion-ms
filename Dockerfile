@@ -3,7 +3,7 @@ FROM eclipse-temurin:21-jdk-alpine AS builder
 
 WORKDIR /app
 
-# Instalar gradle e curl para download do New Relic
+# Instalar dependências necessárias
 RUN apk add --no-cache gradle curl unzip
 
 # Copiar tudo de uma vez (sem otimização de cache)
@@ -15,10 +15,11 @@ RUN gradle clean bootJar --no-daemon
 # Encontrar e renomear JAR
 RUN find build/libs -name "*.jar" -exec cp {} app.jar \;
 
-# Download do New Relic Agent
-RUN curl -O https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip \
+# Download do New Relic Agent com verificação de erro
+RUN curl -L -o newrelic-java.zip https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip \
     && unzip newrelic-java.zip \
-    && rm newrelic-java.zip
+    && rm newrelic-java.zip \
+    && ls -la newrelic/
 
 # Stage de produção
 FROM eclipse-temurin:21-jre-alpine
