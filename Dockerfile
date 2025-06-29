@@ -1,40 +1,68 @@
-# Use JDK 21 como imagem base
-FROM eclipse-temurin:21-jdk-alpine
+# Multi-stage build otimizado para Railway
+FROM eclipse-temurin:21-jdk-alpine AS builder
 
-# Define o diretório de trabalho
+# Instalar dependências necessárias
+RUN apk add --no-cache curl
+
+# Definir diretório de trabalho
 WORKDIR /app
 
-# Copia os arquivos gradle para resolução de dependências
-COPY build.gradle.kts settings.gradle.kts ./
-COPY gradle ./gradle
+# Copiar arquivos de configuração Gradle primeiro (cache de layers)
+COPY gradle gradle/
+COPY gradlew gradle.properties build.gradle settings.gradle ./
 
-# Se você tiver o gradlew no projeto, descomente a linha abaixo
-# COPY gradlew ./
-# RUN chmod +x ./gradlew
+# Dar permissão de execução ao gradlew
+RUN chmod +x ./gradlew
 
-# Se não tiver o gradlew, vamos usar o gradle instalado na imagem
-RUN apk add --no-cache gradle
+# Download de dependências (cache separado)
+RUN ./gradlew dependencies --no-daemon
 
-# Copia o código fonte
-COPY src ./src
+# Copiar código fonte
+COPY src src/
 
-# Constrói a aplicação
-RUN gradle bootJar --no-daemon
+# Build da aplicação
+RUN ./gradlew bootJar --no-daemon --parallel
 
-# Encontra o arquivo JAR gerado e o move para um local conhecido
-RUN find /app/build/libs -name "*.jar" -exec mv {} /app/app.jar \; || echo "Jar not found"
+# Verificar se o JAR foi criado
+RUN find build/libs -name "*.jar" -type f
 
-# Verifica se o JAR foi criado
-RUN ls -la /app/
+# Stage de produção
+FROM eclipse-temurin:21-jre-alpine
 
-# Cria diretório para armazenamento de arquivos
-RUN mkdir -p files
+# Metadados
+LABEL maintainer="Tour App Team"
+LABEL version="1.0.0"
 
-# Configuração de runtime
+# Instalar curl para health checks
+RUN apk add --no-cache curl
+
+# Criar usuário não-root
+RUN addgroup -g 1001 -S appgroup && \
+    adduser -S -D -u 1001 -G appgroup appuser
+
+# Definir diretório de trabalho
+WORKDIR /app
+
+# Copiar JAR do stage builder
+COPY --from=builder /app/build/libs/*-boot.jar app.jar
+
+# Criar diretório para arquivos
+RUN mkdir -p files && chown -R appuser:appgroup /app
+
+# Mudar para usuário não-root
+USER appuser
+
+# Expor porta
 EXPOSE 8080
 
-# Define variável de ambiente específica do Railway para usar a porta atribuída
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8080/actuator/health || exit 1
+
+# Variáveis de ambiente otimizadas para Railway
+ENV JAVA_OPTS="-Xmx512m -Xms256m -XX:+UseG1GC -XX:+UseContainerSupport"
+ENV SPRING_PROFILES_ACTIVE=prod
 ENV PORT=8080
 
-# Ponto de entrada para executar a aplicação
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+# Ponto de entrada
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar --server.port=$PORT"]
