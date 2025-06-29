@@ -50,3 +50,4 @@ out/
 src/main/resources/application-dev.yml
 
 *.pdf
+.env

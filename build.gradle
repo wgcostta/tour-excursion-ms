@@ -22,6 +22,14 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
+    // New Relic Agent API (para métricas customizadas)
+    implementation 'com.newrelic.agent.java:newrelic-api:8.7.0'
+
+    // Prometheus metrics
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
+    // Actuator já está incluído acima
+
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'org.postgresql:postgresql'
 
