@@ -1,39 +1,52 @@
-# Dockerfile com New Relic Agent
+# Dockerfile com New Relic Agent - Versão Mais Robusta
 FROM eclipse-temurin:21-jdk-alpine AS builder
 
 WORKDIR /app
 
-# Instalar dependências necessárias
-RUN apk add --no-cache gradle curl unzip
+# Instalar dependências e verificar conectividade
+RUN apk add --no-cache gradle wget unzip ca-certificates \
+    && update-ca-certificates
 
-# Copiar tudo de uma vez (sem otimização de cache)
+# Verificar conectividade e baixar New Relic Agent
+RUN echo "Testando conectividade..." \
+    && wget --spider https://download.newrelic.com/ \
+    && echo "Baixando New Relic Agent..." \
+    && wget --timeout=30 --tries=3 -O newrelic-java.zip \
+       https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip \
+    && echo "Extraindo New Relic Agent..." \
+    && unzip -q newrelic-java.zip \
+    && rm newrelic-java.zip \
+    && echo "Verificando conteúdo extraído:" \
+    && ls -la newrelic/ \
+    && test -f newrelic/newrelic.jar \
+    && echo "New Relic Agent instalado com sucesso!"
+
+# Copiar código da aplicação
 COPY . .
 
-# Build direto sem etapas intermediárias
+# Build da aplicação
 RUN gradle clean bootJar --no-daemon
 
 # Encontrar e renomear JAR
 RUN find build/libs -name "*.jar" -exec cp {} app.jar \;
-
-# Download do New Relic Agent com verificação de erro
-RUN curl -L -o newrelic-java.zip https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip \
-    && unzip newrelic-java.zip \
-    && rm newrelic-java.zip \
-    && ls -la newrelic/
 
 # Stage de produção
 FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 
-# Instalar curl para healthchecks (opcional)
-RUN apk add --no-cache curl
+# Instalar dependências mínimas para produção
+RUN apk add --no-cache wget ca-certificates \
+    && update-ca-certificates
 
 # Copiar JAR da aplicação
 COPY --from=builder /app/app.jar app.jar
 
 # Copiar New Relic Agent
 COPY --from=builder /app/newrelic/ ./newrelic/
+
+# Verificar se o agente foi copiado corretamente
+RUN test -f ./newrelic/newrelic.jar || (echo "Erro: newrelic.jar não encontrado!" && exit 1)
 
 # Copiar configuração customizada do New Relic (se existir)
 COPY newrelic.yml ./newrelic/newrelic.yml
@@ -53,4 +66,4 @@ ENV JAVA_OPTS="-Xmx512m -Xms256m"
 EXPOSE 8080
 
 # Executar aplicação com New Relic Agent
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -javaagent:./newrelic/newrelic.jar -Dserver.port=${PORT:-8080} -jar app.jar"]
+ENTRYPOINT ["sh", "-c", "echo 'Iniciando aplicação com New Relic Agent...' && java $JAVA_OPTS -javaagent:./newrelic/newrelic.jar -Dserver.port=${PORT:-8080} -jar app.jar"]
