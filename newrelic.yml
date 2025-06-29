@@ -69,7 +69,11 @@ common: &default_settings
     enabled: true
 
   # Labels (úteis para organização)
-  labels: '<%= System.getenv("NEW_RELIC_LABELS") %>'
+  labels:
+    Environment: '<%= System.getenv("NEW_RELIC_ENVIRONMENT") %>'
+    Team: '<%= System.getenv("NEW_RELIC_TEAM") %>'
+    Service: '<%= System.getenv("NEW_RELIC_SERVICE") %>'
+    Version: '<%= System.getenv("NEW_RELIC_VERSION") %>'
 
 # Configurações específicas por ambiente
 production:

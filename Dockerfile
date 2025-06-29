@@ -1,4 +1,4 @@
-# Dockerfile com New Relic Agent - Versão Mais Robusta
+# Dockerfile com New Relic Agent - Versão Final Corrigida
 FROM eclipse-temurin:21-jdk-alpine AS builder
 
 WORKDIR /app
@@ -60,7 +60,16 @@ ENV NEW_RELIC_HIGH_SECURITY="false"
 ENV NEW_RELIC_DISTRIBUTED_TRACING_ENABLED="true"
 ENV NEW_RELIC_APPLICATION_LOGGING_ENABLED="true"
 ENV NEW_RELIC_APPLICATION_LOGGING_FORWARDING_ENABLED="true"
-ENV JAVA_OPTS="-Xmx512m -Xms256m"
+ENV NEW_RELIC_LOG_LEVEL="info"
+
+# Configurar labels como variáveis separadas para evitar problemas de parsing
+ENV NEW_RELIC_ENVIRONMENT="Production"
+ENV NEW_RELIC_TEAM="Backend"
+ENV NEW_RELIC_SERVICE="TourApp"
+ENV NEW_RELIC_VERSION="1.0.0"
+
+# JVM Configuration otimizada para containers
+ENV JAVA_OPTS="-Xmx512m -Xms256m -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -Xshare:off"
 
 # Expor portas
 EXPOSE 8080
