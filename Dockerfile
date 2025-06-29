@@ -1,52 +1,68 @@
-# Use JDK 21 como imagem base
-FROM eclipse-temurin:21-jdk-alpine
+# Multi-stage build
+FROM openjdk:17-jdk-slim AS builder
 
-# Define o diretório de trabalho
+# Install required packages
+RUN apt-get update && apt-get install -y curl unzip && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
 WORKDIR /app
 
-# Copia os arquivos gradle para resolução de dependências
-COPY build.gradle.kts settings.gradle.kts ./
-COPY gradle ./gradle
+# Copy gradle wrapper configuration first
+COPY gradle gradle
+COPY gradlew .
+COPY gradle/wrapper/gradle-wrapper.properties gradle/wrapper/
+COPY settings.gradle .
+COPY build.gradle .
 
-# Instala o Gradle (caso não tenha wrapper)
-RUN apk add --no-cache gradle
+# Download gradle wrapper if missing
+RUN if [ ! -f "gradle/wrapper/gradle-wrapper.jar" ]; then \
+        echo "Downloading Gradle Wrapper..." && \
+        curl -L https://services.gradle.org/distributions/gradle-8.5-bin.zip -o gradle.zip && \
+        unzip gradle.zip && \
+        cp gradle-8.5/lib/gradle-wrapper.jar gradle/wrapper/ && \
+        rm -rf gradle-8.5 gradle.zip; \
+    fi
 
-# Copia o código fonte
-COPY src ./src
+# Make gradlew executable
+RUN chmod +x gradlew
 
-# Constrói a aplicação
-RUN gradle bootJar --no-daemon
+# Verify gradle wrapper
+RUN ls -la gradle/wrapper/ && ./gradlew --version
 
-# Move o .jar gerado para local conhecido
-RUN find /app/build/libs -name "*.jar" -exec mv {} /app/app.jar \; || echo "Jar not found"
+# Copy source code
+COPY src src
 
-# Copia a pasta do New Relic (com o YAML contendo variáveis)
-COPY newrelic/ /app/newrelic/
+# Build the application (skip tests for faster build)
+RUN ./gradlew clean build -x test --no-daemon
 
-# Adiciona suporte ao comando `envsubst` para interpolar variáveis de ambiente
-RUN apk add --no-cache gettext
+# Production stage
+FROM openjdk:17-jre-slim
 
-# Cria diretório adicional (se necessário pela app)
-RUN mkdir -p files
+# Create app user
+RUN addgroup --system appgroup && adduser --system --group appuser
 
-# Exponha a porta (Railway define a PORT via env var)
+# Set working directory
+WORKDIR /app
+
+# Copy built application from builder stage
+COPY --from=builder /app/build/libs/*-boot.jar app.jar
+
+# Change ownership of the app directory
+RUN chown -R appuser:appgroup /app
+
+# Switch to non-root user
+USER appuser
+
+# Expose port
 EXPOSE 8080
-ENV PORT=8080
 
-# Entrypoint com:
-# 1. Interpolação do newrelic.yml
-# 2. Prints no log para debug
-# 3. Execução da aplicação com o agente
-ENTRYPOINT ["/bin/sh", "-c", "\
-  echo 'Interpolando newrelic.yml com variáveis de ambiente...' && \
-  envsubst < /app/newrelic/newrelic.yml > /app/newrelic/newrelic-final.yml && \
-  echo '===== VARIÁVEIS DE AMBIENTE =====' && \
-  echo NEW_RELIC_LICENSE_KEY=$NEW_RELIC_LICENSE_KEY && \
-  echo '===== newrelic-final.yml =====' && \
-  cat /app/newrelic/newrelic-final.yml && \
-  echo '===== LOG DO NEW RELIC AGENT =====' && \
-  cat /app/newrelic/logs/newrelic_agent.log \
-  echo '===== INICIANDO APLICAÇÃO =====' && \
-  java -javaagent:/app/newrelic/newrelic.jar \
-       -Dnewrelic.config.file=/app/newrelic/newrelic-final.yml \
-       -jar /app/app.jar"]
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8080/actuator/health || exit 1
+
+# Environment variables
+ENV JAVA_OPTS="-Xmx512m -Xms256m"
+ENV SPRING_PROFILES_ACTIVE=prod
+
+# Run the application
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
