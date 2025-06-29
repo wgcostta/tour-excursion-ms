@@ -33,9 +33,6 @@ FROM eclipse-temurin:21-jre-alpine
 LABEL maintainer="Tour App Team"
 LABEL version="1.0.0"
 
-# Instalar curl para health checks
-RUN apk add --no-cache curl
-
 # Criar usuário não-root
 RUN addgroup -g 1001 -S appgroup && \
     adduser -S -D -u 1001 -G appgroup appuser
@@ -54,10 +51,6 @@ USER appuser
 
 # Expor porta
 EXPOSE 8080
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:8080/actuator/health || exit 1
 
 # Variáveis de ambiente otimizadas para Railway
 ENV JAVA_OPTS="-Xmx512m -Xms256m -XX:+UseG1GC -XX:+UseContainerSupport"

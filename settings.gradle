@@ -1,0 +1,21 @@
+// ==============================================
+// CONFIGURAÇÃO SIMPLES DO PROJETO
+// ==============================================
+
+// Plugin management DEVE ser o primeiro bloco
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
+// Nome do projeto
+rootProject.name = 'tour-application'
+
+// Build cache simples
+buildCache {
+    local {
+        enabled = true
+    }
+}
