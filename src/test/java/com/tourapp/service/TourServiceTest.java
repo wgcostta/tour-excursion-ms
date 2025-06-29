@@ -144,7 +144,7 @@ class TourServiceTest {
     void updateTour_Success() {
         // Given
         when(tourRepository.findById(tourId)).thenReturn(Optional.of(tour));
-        when(tourRepository.existsByNameIgnoreCase(anyString())).thenReturn(false);
+       // when(tourRepository.existsByNameIgnoreCase(anyString())).thenReturn(false);
         when(tourRepository.save(any(Tour.class))).thenReturn(tour);
 
         // When
