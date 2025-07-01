@@ -1,5 +1,6 @@
 package com.tourapp.config.security;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tourapp.dto.GoogleUserInfo;
 import okhttp3.OkHttpClient;
@@ -9,13 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.Base64;
 import java.util.Map;
 
 @Component
 public class GoogleTokenVerifier {
-
     private static final Logger logger = LoggerFactory.getLogger(GoogleTokenVerifier.class);
 
     private final OkHttpClient httpClient;
@@ -28,10 +27,10 @@ public class GoogleTokenVerifier {
 
     public GoogleUserInfo verify(String idTokenString) {
         try {
-            // Decode token to extract payload
+            // Decodifica o token para extrair o payload
             String[] parts = idTokenString.split("\\.");
             if (parts.length != 3) {
-                logger.error("Invalid token: incorrect format");
+                logger.error("Token inválido: formato incorreto");
                 return null;
             }
 
@@ -39,16 +38,16 @@ public class GoogleTokenVerifier {
             byte[] decodedBytes = Base64.getUrlDecoder().decode(payload);
             String payloadJson = new String(decodedBytes);
 
-            Map<String, Object> tokenInfo = objectMapper.readValue(payloadJson, Map.class);
+            Map<String, Object> tokenInfo = objectMapper.readValue(payloadJson, new TypeReference<Map<String, Object>>() {});
 
-            // Basic token verification
+            // Verificações básicas do token
             long expirationTime = ((Number) tokenInfo.get("exp")).longValue();
             if (System.currentTimeMillis() / 1000 > expirationTime) {
-                logger.error("Token expired");
+                logger.error("Token expirado");
                 return null;
             }
 
-            // Return user information
+            // Retorna as informações do usuário
             return new GoogleUserInfo(
                     (String) tokenInfo.get("sub"),
                     (String) tokenInfo.get("email"),
@@ -56,12 +55,12 @@ public class GoogleTokenVerifier {
                     (String) tokenInfo.get("picture")
             );
         } catch (Exception e) {
-            logger.error("Error verifying Google token", e);
+            logger.error("Erro ao verificar token do Google", e);
             return null;
         }
     }
 
-    // Alternative method using Google's tokeninfo endpoint
+    // Método alternativo usando o endpoint de tokeninfo do Google
     public GoogleUserInfo verifyWithGoogle(String idTokenString) {
         try {
             Request request = new Request.Builder()
@@ -70,12 +69,14 @@ public class GoogleTokenVerifier {
 
             try (Response response = httpClient.newCall(request).execute()) {
                 if (!response.isSuccessful()) {
-                    logger.error("Error verifying token with Google: {}", response.code());
+                    logger.error("Erro ao verificar token com o Google: {}", response.code());
                     return null;
                 }
 
-                String responseBody = response.body().string();
-                Map<String, Object> tokenInfo = objectMapper.readValue(responseBody, Map.class);
+                String responseBody = response.body() != null ? response.body().string() : null;
+                if (responseBody == null) return null;
+
+                Map<String, Object> tokenInfo = objectMapper.readValue(responseBody, new TypeReference<Map<String, Object>>() {});
 
                 return new GoogleUserInfo(
                         (String) tokenInfo.get("sub"),
@@ -84,8 +85,8 @@ public class GoogleTokenVerifier {
                         (String) tokenInfo.get("picture")
                 );
             }
-        } catch (IOException e) {
-            logger.error("Error verifying token with Google", e);
+        } catch (Exception e) {
+            logger.error("Erro ao verificar token com o Google", e);
             return null;
         }
     }

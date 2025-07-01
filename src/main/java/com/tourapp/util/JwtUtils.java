@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
+import java.security.Key;
 import java.util.Date;
 
 @Component
@@ -19,17 +19,17 @@ public class JwtUtils {
     private String jwtSecret;
 
     @Value("${app.jwt.expiration}")
-    private Long jwtExpirationMs;
+    private long jwtExpirationMs;
 
-    @Value("${app.jwt.refresh-expiration:604800000}")
-    private Long refreshExpirationMs;
+    @Value("${app.jwt.refresh-expiration:604800000}") // 7 dias por padrão
+    private long refreshExpirationMs;
 
-    private SecretKey secretKey;
+    private Key secretKey;
 
     @PostConstruct
     public void init() {
-        // Generate a secure key for HS512
-        this.secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+        // Gerar uma chave segura para HS512 independente do tamanho do segredo configurado
+        secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
     }
 
     public String generateJwtToken(UserDetails userDetails) {
@@ -83,7 +83,7 @@ public class JwtUtils {
         try {
             Claims claims = getAllClaimsFromToken(token);
             Date expiration = claims.getExpiration();
-            return (expiration.getTime() - System.currentTimeMillis()) < 300000; // 5 minutes
+            return (expiration.getTime() - System.currentTimeMillis()) < 300000; // 5 minutos
         } catch (Exception e) {
             return true;
         }

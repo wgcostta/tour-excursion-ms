@@ -19,6 +19,19 @@ public class UserInfoResponse {
     // Constructors
     public UserInfoResponse() {}
 
+    public UserInfoResponse(Long id, String email, String fullName, String profilePicture, LocalDateTime createdAt, LocalDateTime lastLogin, List<String> roles, String subscriptionPlan, LocalDateTime subscriptionExpiry, boolean hasActiveSubscription) {
+        this.id = id;
+        this.email = email;
+        this.fullName = fullName;
+        this.profilePicture = profilePicture;
+        this.createdAt = createdAt;
+        this.lastLogin = lastLogin;
+        this.roles = roles;
+        this.subscriptionPlan = subscriptionPlan;
+        this.subscriptionExpiry = subscriptionExpiry;
+        this.hasActiveSubscription = hasActiveSubscription;
+    }
+
     // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

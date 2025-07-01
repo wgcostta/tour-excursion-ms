@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,17 +31,17 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     @Override
     @Transactional
-    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+    public OAuth2User loadUser(OAuth2UserRequest userRequest) {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
-        // Extract user information from Google
+        // Extraindo informações do usuário Google
         String email = (String) attributes.get("email");
         String name = (String) attributes.get("name");
         String googleId = (String) attributes.get("sub");
         String pictureUrl = (String) attributes.get("picture");
 
-        // Check if user exists or create new one
+        // Verificando se o usuário já existe ou criando um novo
         Optional<UserEntity> userOptional = userRepository.findByEmail(email);
 
         if (userOptional.isPresent()) {
@@ -61,7 +60,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         user.setProfilePicture(pictureUrl);
         user.setLastLogin(LocalDateTime.now());
         userRepository.save(user);
-        logger.info("Existing user updated: {}", user.getEmail());
+        logger.info("Usuário existente atualizado: {}", user.getEmail());
     }
 
     private void createNewUser(String email, String googleId, String name, String pictureUrl) {
@@ -71,9 +70,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         user.setGoogleId(googleId);
         user.setProfilePicture(pictureUrl);
         user.setActive(true);
-        user.setCreatedAt(LocalDateTime.now());
 
-        // Assign USER role by default
+        // Atribuindo papel USER por padrão
         RoleEntity userRole = roleRepository.findByName(RoleEntity.ROLE_USER)
                 .orElseGet(() -> {
                     RoleEntity newRole = new RoleEntity();
@@ -83,6 +81,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         user.getRoles().add(userRole);
         userRepository.save(user);
-        logger.info("New user created: {}", email);
+        logger.info("Novo usuário criado: {}", email);
     }
 }
