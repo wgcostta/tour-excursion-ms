@@ -1,4 +1,4 @@
-package com.tourapp.config;
+/*package com.tourapp.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -81,4 +81,4 @@ public class CorsConfig implements WebMvcConfigurer {
     public CorsFilter corsFilter() {
         return new CorsFilter(corsConfigurationSource());
     }
-}
+}*/
