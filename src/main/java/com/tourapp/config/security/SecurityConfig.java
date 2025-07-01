@@ -45,12 +45,16 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers("/api/**").authenticated() TODO
                         // Permitir acesso público para os endpoints de autenticação e OPTIONS
-                        .requestMatchers("/api/auth/**", "/oauth2/**", "/login/**", "/health").permitAll()
+                        .requestMatchers("/api/auth/**",
+                                "/oauth2/**", "/login/**",
+                                "/api/auth/google/**", "/health"
+                        ).permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         // É crucial permitir requests OPTIONS para CORS preflight
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/**").authenticated()
+
                         .anyRequest().permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2

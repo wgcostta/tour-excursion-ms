@@ -1,93 +1,79 @@
 package com.tourapp.config.security;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
 import com.tourapp.dto.GoogleUserInfo;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.Base64;
-import java.util.Map;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.Collections;
 
 @Component
 public class GoogleTokenVerifier {
     private static final Logger logger = LoggerFactory.getLogger(GoogleTokenVerifier.class);
 
-    private final OkHttpClient httpClient;
-    private final ObjectMapper objectMapper;
+    private final GoogleIdTokenVerifier verifier;
 
-    public GoogleTokenVerifier(OkHttpClient httpClient, ObjectMapper objectMapper) {
-        this.httpClient = httpClient;
-        this.objectMapper = objectMapper;
+    public GoogleTokenVerifier(@Value("${google.client-id}") String clientId) {
+        logger.info("Inicializando verificador de token com Client ID: {}", clientId);
+
+        verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
+                .setAudience(Collections.singletonList(clientId))
+                .setIssuer("https://accounts.google.com")
+                .build();
     }
 
-    public GoogleUserInfo verify(String idTokenString) {
+    public GoogleUserInfo verify(String idToken) {
         try {
-            // Decodifica o token para extrair o payload
-            String[] parts = idTokenString.split("\\.");
-            if (parts.length != 3) {
-                logger.error("Token inválido: formato incorreto");
+            logger.info("Tentando verificar token: {}", idToken);
+
+            GoogleIdToken token = verifier.verify(idToken);
+
+            if (token != null) {
+                GoogleIdToken.Payload payload = token.getPayload();
+
+                // Log detalhado do payload
+                logger.info("Payload verificado:");
+                logger.info("Sub (User ID): {}", payload.getSubject());
+                logger.info("Email: {}", payload.getEmail());
+                logger.info("Name: {}", payload.get("name"));
+                logger.info("Picture: {}", payload.get("picture"));
+
+                return new GoogleUserInfo(
+                        payload.getSubject(),
+                        payload.getEmail(),
+                        (String) payload.get("name"),
+                        (String) payload.get("picture")
+                );
+            } else {
+                logger.error("Token inválido ou não verificado");
                 return null;
             }
-
-            String payload = parts[1];
-            byte[] decodedBytes = Base64.getUrlDecoder().decode(payload);
-            String payloadJson = new String(decodedBytes);
-
-            Map<String, Object> tokenInfo = objectMapper.readValue(payloadJson, new TypeReference<Map<String, Object>>() {});
-
-            // Verificações básicas do token
-            long expirationTime = ((Number) tokenInfo.get("exp")).longValue();
-            if (System.currentTimeMillis() / 1000 > expirationTime) {
-                logger.error("Token expirado");
-                return null;
-            }
-
-            // Retorna as informações do usuário
-            return new GoogleUserInfo(
-                    (String) tokenInfo.get("sub"),
-                    (String) tokenInfo.get("email"),
-                    (String) tokenInfo.get("name"),
-                    (String) tokenInfo.get("picture")
-            );
+        } catch (GeneralSecurityException e) {
+            logger.error("Erro de segurança ao verificar token", e);
+            return null;
+        } catch (IOException e) {
+            logger.error("Erro de IO ao verificar token", e);
+            return null;
         } catch (Exception e) {
-            logger.error("Erro ao verificar token do Google", e);
+            logger.error("Erro inesperado ao verificar token", e);
             return null;
         }
     }
 
-    // Método alternativo usando o endpoint de tokeninfo do Google
-    public GoogleUserInfo verifyWithGoogle(String idTokenString) {
+    // Método adicional para validação manual se necessário
+    public boolean isTokenValid(String idToken) {
         try {
-            Request request = new Request.Builder()
-                    .url("https://oauth2.googleapis.com/tokeninfo?id_token=" + idTokenString)
-                    .build();
-
-            try (Response response = httpClient.newCall(request).execute()) {
-                if (!response.isSuccessful()) {
-                    logger.error("Erro ao verificar token com o Google: {}", response.code());
-                    return null;
-                }
-
-                String responseBody = response.body() != null ? response.body().string() : null;
-                if (responseBody == null) return null;
-
-                Map<String, Object> tokenInfo = objectMapper.readValue(responseBody, new TypeReference<Map<String, Object>>() {});
-
-                return new GoogleUserInfo(
-                        (String) tokenInfo.get("sub"),
-                        (String) tokenInfo.get("email"),
-                        (String) tokenInfo.get("name"),
-                        (String) tokenInfo.get("picture")
-                );
-            }
+            return verifier.verify(idToken) != null;
         } catch (Exception e) {
-            logger.error("Erro ao verificar token com o Google", e);
-            return null;
+            logger.error("Erro na validação do token", e);
+            return false;
         }
     }
 }

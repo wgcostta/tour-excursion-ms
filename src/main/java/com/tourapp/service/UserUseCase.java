@@ -16,7 +16,7 @@ public interface UserUseCase {
 
     void updateSubscription(String email, String plan, int months);
 
-    UserEntity processGoogleToken(String googleToken);
+    UserService.Pair<UserEntity, UserDetails> processGoogleToken(String googleToken);
 
     JwtResponse buildJwtResponse(UserEntity user, String accessToken, String token);
 }

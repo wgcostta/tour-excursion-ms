@@ -18,4 +18,14 @@ public class GoogleUserInfo {
     public String getEmail() { return email; }
     public String getName() { return name; }
     public String getPicture() { return picture; }
+
+    @Override
+    public String toString() {
+        return "GoogleUserInfo{" +
+                "sub='" + sub + '\'' +
+                ", email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", picture='" + picture + '\'' +
+                '}';
+    }
 }

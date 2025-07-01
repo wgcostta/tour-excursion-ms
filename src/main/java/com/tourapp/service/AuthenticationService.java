@@ -4,56 +4,65 @@ import com.tourapp.dto.response.JwtResponse;
 import com.tourapp.dto.response.TokenRefreshResponse;
 import com.tourapp.entity.RefreshTokenEntity;
 import com.tourapp.entity.UserEntity;
-import com.tourapp.util.JwtUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthenticationService implements AuthenticationUseCase{
+    private final UserService userService;
+    private final RefreshTokenService refreshTokenService;
 
-    private final UserUseCase userService;
-    private final RefreshTokenUseCase refreshTokenService;
-    private final JwtUtils jwtUtils;
-    private final UserDetailsServiceImpl userDetailsService;
-
-    public AuthenticationService(UserService userService, RefreshTokenUseCase refreshTokenService,
-                                 JwtUtils jwtUtils, UserDetailsServiceImpl userDetailsService) {
+    public AuthenticationService(
+            UserService userService,
+            RefreshTokenService refreshTokenService
+    ) {
         this.userService = userService;
         this.refreshTokenService = refreshTokenService;
-        this.jwtUtils = jwtUtils;
-        this.userDetailsService = userDetailsService;
     }
 
+    /**
+     * Método central para autenticação via Google
+     */
     @Transactional
     public JwtResponse authenticateWithGoogle(String googleToken) {
-        // Process Google token and get user
-        UserEntity user = userService.processGoogleToken(googleToken);
+        // Obter informações do usuário
+        UserService.Pair<UserEntity, UserDetails> userInfo = userService.processGoogleToken(googleToken);
 
-        // Load UserDetails
-        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
+        // Gerar tokens JWT
+        String accessToken = userService.generateAccessToken(userInfo.getSecond());
 
-        // Generate tokens
-        String accessToken = jwtUtils.generateJwtToken(userDetails);
-        RefreshTokenEntity refreshToken = refreshTokenService.createRefreshToken(user.getEmail(), userDetails);
+        // Gerar refresh token
+        RefreshTokenEntity refreshToken = refreshTokenService.createRefreshToken(
+                userInfo.getFirst().getEmail(),
+                userInfo.getSecond()
+        );
 
-        // Build and return response
-        return userService.buildJwtResponse(user, accessToken, refreshToken.getToken());
+        // Construir e retornar a resposta
+        return userService.buildJwtResponse(
+                userInfo.getFirst(),
+                accessToken,
+                refreshToken.getToken()
+        );
     }
 
+    /**
+     * Método para renovar o token de acesso
+     */
     public TokenRefreshResponse refreshToken(String refreshToken) {
-        // Verify and get refresh token
+        // Verificar e obter o refresh token
         RefreshTokenEntity tokenEntity = refreshTokenService.findAndValidateToken(refreshToken);
 
-        // Get user details
-        UserDetails userDetails = userDetailsService.loadUserByUsername(tokenEntity.getUserEmail());
+        // Obter detalhes do usuário
+        UserDetails userDetails = userService.loadUserDetailsByEmail(tokenEntity.getUserEmail());
 
-        // Generate new access token
-        String newAccessToken = jwtUtils.generateJwtToken(userDetails);
+        // Gerar novo token de acesso
+        String newAccessToken = userService.generateAccessToken(userDetails);
 
-        // Return response
-        return new TokenRefreshResponse(newAccessToken, tokenEntity.getToken());
+        // Retornar resposta
+        return new TokenRefreshResponse(
+                newAccessToken,
+                tokenEntity.getToken()
+        );
     }
 }
-
-

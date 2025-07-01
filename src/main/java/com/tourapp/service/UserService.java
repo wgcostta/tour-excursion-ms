@@ -30,51 +30,65 @@ public class UserService implements UserUseCase {
     private final RoleRepository roleRepository;
     private final JwtUtils jwtUtils;
     private final GoogleTokenVerifier googleTokenVerifier;
-    private final RefreshTokenService refreshTokenService;
 
     public UserService(
             UserRepository userRepository,
             RoleRepository roleRepository,
             JwtUtils jwtUtils,
-            GoogleTokenVerifier googleTokenVerifier,
-            RefreshTokenService refreshTokenService
+            GoogleTokenVerifier googleTokenVerifier
     ) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.jwtUtils = jwtUtils;
         this.googleTokenVerifier = googleTokenVerifier;
-        this.refreshTokenService = refreshTokenService;
     }
 
-    // Método para processar token do Google e retornar usuário e UserDetails
-    public UserEntity processGoogleToken(String googleToken) {
-        GoogleUserInfo googleUserInfo = googleTokenVerifier.verify(googleToken);
+    /**
+     * Método para processar Google ID Token e retornar usuário e UserDetails
+     * CORRIGIDO: Remove dependência de RefreshTokenService para evitar circulação
+     */
+    @Transactional
+    public Pair<UserEntity, UserDetails> processGoogleToken(String googleIdToken) {
+        logger.info("Processando Google ID Token");
+
+        // Validar o Google ID Token usando GoogleTokenVerifier
+        GoogleUserInfo googleUserInfo = googleTokenVerifier.verify(googleIdToken);
         if (googleUserInfo == null) {
+            logger.error("Google ID Token inválido ou expirado");
             throw new RuntimeException("Token inválido ou expirado");
         }
+
+        logger.info("Google ID Token validado com sucesso para usuário: {}", googleUserInfo.getEmail());
 
         // Criar ou atualizar usuário
         UserEntity user = findOrCreateUser(googleUserInfo);
 
-        // Criar UserDetails
+        // Criar UserDetails para o usuário
         List<SimpleGrantedAuthority> authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .collect(Collectors.toList());
 
         UserDetails userDetails = org.springframework.security.core.userdetails.User
                 .withUsername(user.getEmail())
-                .password("")
+                .password("") // Senha vazia para OAuth2
                 .authorities(authorities)
                 .build();
 
-        return user;
+        logger.info("UserDetails criado com sucesso para: {}", user.getEmail());
+        return new Pair<>(user, userDetails);
     }
 
+    /**
+     * Gera token JWT INTERNO da aplicação (não confundir com Google ID Token)
+     */
     public String generateAccessToken(UserDetails userDetails) {
+        logger.debug("Gerando token de acesso interno para: {}", userDetails.getUsername());
         return jwtUtils.generateJwtToken(userDetails);
     }
 
-    // Método para construir a resposta JWT
+    /**
+     * Constrói a resposta JWT com informações do usuário
+     */
     public JwtResponse buildJwtResponse(UserEntity user, String accessToken, String refreshToken) {
         List<String> roles = user.getRoles().stream()
                 .map(RoleEntity::getName)
@@ -96,10 +110,15 @@ public class UserService implements UserUseCase {
         );
     }
 
-    // Método para encontrar ou criar usuário baseado nas informações do Google
+    /**
+     * Encontra ou cria usuário baseado nas informações do Google
+     */
+    @Transactional
     private UserEntity findOrCreateUser(GoogleUserInfo googleUserInfo) {
         UserEntity user = userRepository.findByEmail(googleUserInfo.getEmail())
                 .orElseGet(() -> {
+                    logger.info("Criando novo usuário para: {}", googleUserInfo.getEmail());
+
                     // Cria novo usuário
                     UserEntity newUser = new UserEntity();
                     newUser.setEmail(googleUserInfo.getEmail());
@@ -108,7 +127,7 @@ public class UserService implements UserUseCase {
                     newUser.setProfilePicture(googleUserInfo.getPicture());
                     newUser.setActive(true);
 
-                    // Atribui papel UserEntity por padrão
+                    // Atribui papel USER por padrão
                     RoleEntity userRole = roleRepository.findByName(RoleEntity.ROLE_USER)
                             .orElseGet(() -> {
                                 RoleEntity newRole = new RoleEntity();
@@ -120,83 +139,10 @@ public class UserService implements UserUseCase {
                     return userRepository.save(newUser);
                 });
 
-        // Atualiza dados do usuário, se necessário
+        // Atualiza dados do usuário existente se necessário
         updateUserInfo(user, googleUserInfo);
 
         return user;
-    }
-
-    @Transactional
-    public JwtResponse validateToken(String googleToken) {
-        // Verifica o token do Google
-        GoogleUserInfo googleUserInfo = googleTokenVerifier.verify(googleToken);
-        if (googleUserInfo == null) {
-            throw new RuntimeException("Token inválido ou expirado");
-        }
-
-        logger.info("Token do Google validado para o usuário: {}", googleUserInfo.getEmail());
-
-        // Verificando se o usuário já existe ou criando um novo
-        UserEntity user = userRepository.findByEmail(googleUserInfo.getEmail())
-                .orElseGet(() -> {
-                    // Cria novo usuário
-                    UserEntity newUser = new UserEntity();
-                    newUser.setEmail(googleUserInfo.getEmail());
-                    newUser.setFullName(googleUserInfo.getName());
-                    newUser.setGoogleId(googleUserInfo.getSub());
-                    newUser.setProfilePicture(googleUserInfo.getPicture());
-                    newUser.setActive(true);
-
-                    // Atribui papel UserEntity por padrão
-                    RoleEntity userRole = roleRepository.findByName(RoleEntity.ROLE_USER)
-                            .orElseGet(() -> {
-                                RoleEntity newRole = new RoleEntity();
-                                newRole.setName(RoleEntity.ROLE_USER);
-                                return roleRepository.save(newRole);
-                            });
-
-                    newUser.getRoles().add(userRole);
-                    return userRepository.save(newUser);
-                });
-
-        // Atualiza dados do usuário, se necessário
-        updateUserInfo(user, googleUserInfo);
-
-        // Cria um UserDetails para gerar o token JWT
-        List<SimpleGrantedAuthority> authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toList());
-
-        UserDetails userDetails = org.springframework.security.core.userdetails.User
-                .withUsername(user.getEmail())
-                .password("")
-                .authorities(authorities)
-                .build();
-
-        // Gera token JWT
-        String token = jwtUtils.generateJwtToken(userDetails);
-
-        // Gera refresh token
-        var refreshToken = refreshTokenService.createRefreshToken(user.getEmail(), userDetails);
-
-        List<String> roles = user.getRoles().stream()
-                .map(RoleEntity::getName)
-                .collect(Collectors.toList());
-
-        boolean hasActiveSubscription = user.getSubscriptionExpiry() != null &&
-                user.getSubscriptionExpiry().isAfter(LocalDateTime.now());
-
-        return new JwtResponse(
-                token,
-                refreshToken.getToken(),
-                user.getId() != null ? user.getId() : 0,
-                user.getEmail(),
-                user.getFullName(),
-                roles,
-                user.getProfilePicture(),
-                user.getSubscriptionPlan(),
-                hasActiveSubscription
-        );
     }
 
     @Override
@@ -218,12 +164,12 @@ public class UserService implements UserUseCase {
     private void updateUserInfo(UserEntity user, GoogleUserInfo googleUserInfo) {
         boolean updated = false;
 
-        if (!googleUserInfo.getSub().equals(user.getGoogleId())) {
+        if (googleUserInfo.getSub() != null && !googleUserInfo.getSub().equals(user.getGoogleId())) {
             user.setGoogleId(googleUserInfo.getSub());
             updated = true;
         }
 
-        if (!googleUserInfo.getName().equals(user.getFullName())) {
+        if (googleUserInfo.getName() != null && !googleUserInfo.getName().equals(user.getFullName())) {
             user.setFullName(googleUserInfo.getName());
             updated = true;
         }
@@ -240,6 +186,7 @@ public class UserService implements UserUseCase {
 
         if (updated) {
             userRepository.save(user);
+            logger.info("Informações do usuário atualizadas: {}", user.getEmail());
         }
     }
 
@@ -308,7 +255,7 @@ public class UserService implements UserUseCase {
         userRepository.save(user);
     }
 
-    // Classe auxiliar para simular o Pair do Kotlin
+    // Classe auxiliar para simular o Pair
     public static class Pair<A, B> {
         private final A first;
         private final B second;
