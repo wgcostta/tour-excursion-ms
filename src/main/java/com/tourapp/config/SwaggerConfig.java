@@ -76,10 +76,7 @@ public class SwaggerConfig {
                         .description("Tour search and filtering operations"),
                 new Tag()
                         .name("Analytics")
-                        .description("Tour analytics and reporting endpoints"),
-                new Tag()
-                        .name("Health")
-                        .description("Application health and monitoring endpoints")
+                        .description("Tour analytics and reporting endpoints")
         );
     }
 
