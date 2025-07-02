@@ -61,14 +61,23 @@ def criar_arquivos_com_conteudo(caminho_arquivo_entrada):
 def salvar_arquivo(caminho_completo, conteudo):
     """
     Função auxiliar para salvar o conteúdo em um arquivo.
+    Se o arquivo já existir, ele será removido e recriado com o novo conteúdo.
     """
     try:
+        # Verifica se o arquivo já existe para emitir uma mensagem específica
+        if os.path.exists(caminho_completo):
+            print(f"Arquivo '{caminho_completo}' já existe. Removendo e recriando...")
+            os.remove(caminho_completo) # Remove o arquivo existente
+
+        # Abre o arquivo no modo de escrita ('w').
+        # Se o arquivo foi removido, ele será criado. Se não existia, será criado.
         with open(caminho_completo, 'w', encoding='utf-8') as f:
             f.write(conteudo)
         print(f"Conteúdo salvo em '{caminho_completo}'.")
     except IOError as e:
         print(f"Erro ao salvar o arquivo '{caminho_completo}': {e}")
-
+    except OSError as e: # Adicionado para capturar erros específicos de remoção de arquivo
+        print(f"Erro ao remover o arquivo '{caminho_completo}': {e}")
 
 # --- Exemplo de Uso ---
 if __name__ == "__main__":
