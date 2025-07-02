@@ -2,9 +2,9 @@
 package com.tourapp.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tourapp.dto.TourDTO;
-import com.tourapp.entity.Tour;
-import com.tourapp.repository.TourRepository;
+import br.com.tourapp.tourapp.dto.TourDTO;
+import br.com.tourapp.tourapp.entity.Tour;
+import br.com.tourapp.tourapp.repository.TourRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

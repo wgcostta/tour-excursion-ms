@@ -1,10 +1,11 @@
 package com.tourapp.service;
 
-import com.tourapp.dto.TourDTO;
-import com.tourapp.entity.Tour;
-import com.tourapp.exception.DuplicateResourceException;
-import com.tourapp.exception.ResourceNotFoundException;
-import com.tourapp.repository.TourRepository;
+import br.com.tourapp.tourapp.dto.TourDTO;
+import br.com.tourapp.tourapp.entity.Tour;
+import br.com.tourapp.tourapp.exception.DuplicateResourceException;
+import br.com.tourapp.tourapp.exception.ResourceNotFoundException;
+import br.com.tourapp.tourapp.repository.TourRepository;
+import br.com.tourapp.tourapp.service.TourService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
