@@ -337,7 +337,7 @@ management:
       prometheus:
         enabled: true
 
-//src/main/java/br/com/tourapp/TourappApplication.java
+//src/main/java/br/com/tourapp/tourapp/TourappApplication.java
 package br.com.tourapp;
 
 import org.springframework.boot.SpringApplication;
@@ -357,7 +357,7 @@ public class TourappApplication {
     }
 }
 
-//src/main/java/br/com/tourapp/entity/BaseEntity.java
+//src/main/java/br/com/tourapp/tourapp/entity/BaseEntity.java
 package br.com.tourapp.entity;
 
 import jakarta.persistence.*;
@@ -434,7 +434,7 @@ public abstract class BaseEntity {
     }
 }
 
-//src/main/java/br/com/tourapp/enums/StatusOrganizador.java
+//src/main/java/br/com/tourapp/tourapp/enums/StatusOrganizador.java
 package br.com.tourapp.enums;
 
 public enum StatusOrganizador {
@@ -454,7 +454,7 @@ public enum StatusOrganizador {
     }
 }
 
-//src/main/java/br/com/tourapp/enums/StatusExcursao.java
+//src/main/java/br/com/tourapp/tourapp/enums/StatusExcursao.java
 package br.com.tourapp.enums;
 
 public enum StatusExcursao {
@@ -475,7 +475,7 @@ public enum StatusExcursao {
     }
 }
 
-//src/main/java/br/com/tourapp/enums/StatusPagamento.java
+//src/main/java/br/com/tourapp/tourapp/enums/StatusPagamento.java
 package br.com.tourapp.enums;
 
 public enum StatusPagamento {
@@ -498,7 +498,7 @@ public enum StatusPagamento {
     }
 }
 
-//src/main/java/br/com/tourapp/enums/MetodoPagamento.java
+//src/main/java/br/com/tourapp/tourapp/enums/MetodoPagamento.java
 package br.com.tourapp.enums;
 
 public enum MetodoPagamento {
@@ -519,7 +519,7 @@ public enum MetodoPagamento {
     }
 }
 
-//src/main/java/br/com/tourapp/enums/TipoNotificacao.java
+//src/main/java/br/com/tourapp/tourapp/enums/TipoNotificacao.java
 package br.com.tourapp.enums;
 
 public enum TipoNotificacao {
@@ -541,7 +541,7 @@ public enum TipoNotificacao {
     }
 }
 
-//src/main/java/br/com/tourapp/enums/TipoUsuario.java
+//src/main/java/br/com/tourapp/tourapp/enums/TipoUsuario.java
 package br.com.tourapp.enums;
 
 public enum TipoUsuario {
@@ -560,7 +560,7 @@ public enum TipoUsuario {
     }
 }
 
-//src/main/java/br/com/tourapp/entity/Cliente.java
+//src/main/java/br/com/tourapp/tourapp/entity/Cliente.java
 package br.com.tourapp.entity;
 
 import br.com.tourapp.enums.TipoUsuario;
@@ -654,7 +654,7 @@ public class Cliente extends BaseEntity {
     public void setInscricoes(List<Inscricao> inscricoes) { this.inscricoes = inscricoes; }
 }
 
-//src/main/java/br/com/tourapp/entity/Organizador.java
+//src/main/java/br/com/tourapp/tourapp/entity/Organizador.java
 package br.com.tourapp.entity;
 
 import br.com.tourapp.enums.StatusOrganizador;
@@ -754,7 +754,7 @@ public class Organizador extends BaseEntity {
     public void setExcursoes(List<Excursao> excursoes) { this.excursoes = excursoes; }
 }
 
-//src/main/java/br/com/tourapp/entity/Excursao.java
+//src/main/java/br/com/tourapp/tourapp/entity/Excursao.java
 package br.com.tourapp.entity;
 
 import br.com.tourapp.enums.StatusExcursao;
@@ -908,7 +908,7 @@ public class Excursao extends BaseEntity {
     public void setInscricoes(List<Inscricao> inscricoes) { this.inscricoes = inscricoes; }
 }
 
-//src/main/java/br/com/tourapp/entity/Inscricao.java
+//src/main/java/br/com/tourapp/tourapp/entity/Inscricao.java
 package br.com.tourapp.entity;
 
 import br.com.tourapp.enums.StatusPagamento;
@@ -975,7 +975,7 @@ public class Inscricao extends BaseEntity {
     public void setPagamentos(List<Pagamento> pagamentos) { this.pagamentos = pagamentos; }
 }
 
-//src/main/java/br/com/tourapp/entity/Pagamento.java
+//src/main/java/br/com/tourapp/tourapp/entity/Pagamento.java
 package br.com.tourapp.entity;
 
 import br.com.tourapp.enums.MetodoPagamento;
@@ -1073,7 +1073,7 @@ public class Pagamento extends BaseEntity {
     public void setObservacoes(String observacoes) { this.observacoes = observacoes; }
 }
 
-//src/main/java/br/com/tourapp/entity/Notificacao.java
+//src/main/java/br/com/tourapp/tourapp/entity/Notificacao.java
 package br.com.tourapp.entity;
 
 import br.com.tourapp.enums.TipoNotificacao;
@@ -1164,7 +1164,7 @@ public class Notificacao extends BaseEntity {
     public void setEnviada(Boolean enviada) { this.enviada = enviada; }
 }
 
-//src/main/java/br/com/tourapp/config/SecurityConfig.java
+//src/main/java/br/com/tourapp/tourapp/config/SecurityConfig.java
 package br.com.tourapp.config;
 
 import br.com.tourapp.security.JwtAuthenticationFilter;
@@ -1246,7 +1246,7 @@ public class SecurityConfig {
     }
 }
 
-//src/main/java/br/com/tourapp/security/JwtUtil.java
+//src/main/java/br/com/tourapp/tourapp/security/JwtUtil.java
 package br.com.tourapp.security;
 
 import br.com.tourapp.enums.TipoUsuario;
@@ -1345,7 +1345,7 @@ public class JwtUtil {
     }
 }
 
-//src/main/java/br/com/tourapp/security/JwtAuthenticationFilter.java
+//src/main/java/br/com/tourapp/tourapp/security/JwtAuthenticationFilter.java
 package br.com.tourapp.security;
 
 import jakarta.servlet.FilterChain;
@@ -1407,7 +1407,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 }
 
-//src/main/java/br/com/tourapp/security/CustomUserDetailsService.java
+//src/main/java/br/com/tourapp/tourapp/security/CustomUserDetailsService.java
 package br.com.tourapp.security;
 
 import br.com.tourapp.entity.Cliente;
@@ -1449,7 +1449,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 }
 
-//src/main/java/br/com/tourapp/security/SecurityUser.java
+//src/main/java/br/com/tourapp/tourapp/security/SecurityUser.java
 package br.com.tourapp.security;
 
 import br.com.tourapp.entity.Cliente;
@@ -1543,7 +1543,7 @@ public class SecurityUser implements UserDetails {
     }
 }
 
-//src/main/java/br/com/tourapp/repository/ClienteRepository.java
+//src/main/java/br/com/tourapp/tourapp/repository/ClienteRepository.java
 package br.com.tourapp.repository;
 
 import br.com.tourapp.entity.Cliente;
@@ -1561,7 +1561,7 @@ public interface ClienteRepository extends JpaRepository<Cliente, UUID> {
     boolean existsByEmail(String email);
 }
 
-//src/main/java/br/com/tourapp/repository/OrganizadorRepository.java
+//src/main/java/br/com/tourapp/tourapp/repository/OrganizadorRepository.java
 package br.com.tourapp.repository;
 
 import br.com.tourapp.entity.Organizador;
@@ -1583,7 +1583,7 @@ public interface OrganizadorRepository extends JpaRepository<Organizador, UUID> 
     List<Organizador> findByStatus(StatusOrganizador status);
 }
 
-//src/main/java/br/com/tourapp/repository/ExcursaoRepository.java
+//src/main/java/br/com/tourapp/tourapp/repository/ExcursaoRepository.java
 package br.com.tourapp.repository;
 
 import br.com.tourapp.entity.Excursao;
@@ -1617,7 +1617,7 @@ public interface ExcursaoRepository extends JpaRepository<Excursao, UUID> {
                                                    @Param("fim") LocalDateTime fim);
 }
 
-//src/main/java/br/com/tourapp/repository/InscricaoRepository.java
+//src/main/java/br/com/tourapp/tourapp/repository/InscricaoRepository.java
 package br.com.tourapp.repository;
 
 import br.com.tourapp.entity.Inscricao;
@@ -1969,7 +1969,7 @@ management:
       prometheus:
         enabled: true
 
-//src/main/java/br/com/tourapp/TourappApplication.java
+//src/main/java/br/com/tourapp/tourapp/TourappApplication.java
 package br.com.tourapp;
 
 import org.springframework.boot.SpringApplication;
@@ -1989,7 +1989,7 @@ public class TourappApplication {
     }
 }
 
-//src/main/java/br/com/tourapp/entity/BaseEntity.java
+//src/main/java/br/com/tourapp/tourapp/entity/BaseEntity.java
 package br.com.tourapp.entity;
 
 import jakarta.persistence.*;
@@ -2066,7 +2066,7 @@ public abstract class BaseEntity {
     }
 }
 
-//src/main/java/br/com/tourapp/enums/StatusOrganizador.java
+//src/main/java/br/com/tourapp/tourapp/enums/StatusOrganizador.java
 package br.com.tourapp.enums;
 
 public enum StatusOrganizador {
@@ -2086,7 +2086,7 @@ public enum StatusOrganizador {
     }
 }
 
-//src/main/java/br/com/tourapp/enums/StatusExcursao.java
+//src/main/java/br/com/tourapp/tourapp/enums/StatusExcursao.java
 package br.com.tourapp.enums;
 
 public enum StatusExcursao {
@@ -2107,7 +2107,7 @@ public enum StatusExcursao {
     }
 }
 
-//src/main/java/br/com/tourapp/enums/StatusPagamento.java
+//src/main/java/br/com/tourapp/tourapp/enums/StatusPagamento.java
 package br.com.tourapp.enums;
 
 public enum StatusPagamento {
@@ -2130,7 +2130,7 @@ public enum StatusPagamento {
     }
 }
 
-//src/main/java/br/com/tourapp/enums/MetodoPagamento.java
+//src/main/java/br/com/tourapp/tourapp/enums/MetodoPagamento.java
 package br.com.tourapp.enums;
 
 public enum MetodoPagamento {
@@ -2151,7 +2151,7 @@ public enum MetodoPagamento {
     }
 }
 
-//src/main/java/br/com/tourapp/enums/TipoNotificacao.java
+//src/main/java/br/com/tourapp/tourapp/enums/TipoNotificacao.java
 package br.com.tourapp.enums;
 
 public enum TipoNotificacao {
@@ -2173,7 +2173,7 @@ public enum TipoNotificacao {
     }
 }
 
-//src/main/java/br/com/tourapp/enums/TipoUsuario.java
+//src/main/java/br/com/tourapp/tourapp/enums/TipoUsuario.java
 package br.com.tourapp.enums;
 
 public enum TipoUsuario {
@@ -2192,7 +2192,7 @@ public enum TipoUsuario {
     }
 }
 
-//src/main/java/br/com/tourapp/entity/Cliente.java
+//src/main/java/br/com/tourapp/tourapp/entity/Cliente.java
 package br.com.tourapp.entity;
 
 import br.com.tourapp.enums.TipoUsuario;
@@ -2286,7 +2286,7 @@ public class Cliente extends BaseEntity {
     public void setInscricoes(List<Inscricao> inscricoes) { this.inscricoes = inscricoes; }
 }
 
-//src/main/java/br/com/tourapp/entity/Organizador.java
+//src/main/java/br/com/tourapp/tourapp/entity/Organizador.java
 package br.com.tourapp.entity;
 
 import br.com.tourapp.enums.StatusOrganizador;
@@ -2386,7 +2386,7 @@ public class Organizador extends BaseEntity {
     public void setExcursoes(List<Excursao> excursoes) { this.excursoes = excursoes; }
 }
 
-//src/main/java/br/com/tourapp/entity/Excursao.java
+//src/main/java/br/com/tourapp/tourapp/entity/Excursao.java
 package br.com.tourapp.entity;
 
 import br.com.tourapp.enums.StatusExcursao;
@@ -2515,7 +2515,7 @@ public interface InscricaoRepository extends JpaRepository<Inscricao, UUID> {
     long countByExcursaoId(UUID excursaoId);
 }
 
-//src/main/java/br/com/tourapp/repository/PagamentoRepository.java
+//src/main/java/br/com/tourapp/tourapp/repository/PagamentoRepository.java
 package br.com.tourapp.repository;
 
 import br.com.tourapp.entity.Pagamento;
@@ -2537,7 +2537,7 @@ public interface PagamentoRepository extends JpaRepository<Pagamento, UUID> {
     List<Pagamento> findByStatus(StatusPagamento status);
 }
 
-//src/main/java/br/com/tourapp/repository/NotificacaoRepository.java
+//src/main/java/br/com/tourapp/tourapp/repository/NotificacaoRepository.java
 package br.com.tourapp.repository;
 
 import br.com.tourapp.entity.Notificacao;
@@ -2557,7 +2557,7 @@ public interface NotificacaoRepository extends JpaRepository<Notificacao, UUID> 
     List<Notificacao> findByEnviadaFalse();
 }
 
-//src/main/java/br/com/tourapp/service/AuthService.java
+//src/main/java/br/com/tourapp/tourapp/service/AuthService.java
 package br.com.tourapp.service;
 
 import br.com.tourapp.dto.request.CadastroClienteRequest;
@@ -2724,7 +2724,7 @@ public class AuthService {
     }
 }
 
-//src/main/java/br/com/tourapp/dto/request/LoginRequest.java
+//src/main/java/br/com/tourapp/tourapp/dto/request/LoginRequest.java
 package br.com.tourapp.dto.request;
 
 import jakarta.validation.constraints.Email;
@@ -2755,7 +2755,7 @@ public class LoginRequest {
     public void setSenha(String senha) { this.senha = senha; }
 }
 
-//src/main/java/br/com/tourapp/dto/request/CadastroClienteRequest.java
+//src/main/java/br/com/tourapp/tourapp/dto/request/CadastroClienteRequest.java
 package br.com.tourapp.dto.request;
 
 import jakarta.validation.constraints.Email;
@@ -2796,7 +2796,7 @@ public class CadastroClienteRequest {
     public void setTelefone(String telefone) { this.telefone = telefone; }
 }
 
-//src/main/java/br/com/tourapp/dto/request/CadastroOrganizadorRequest.java
+//src/main/java/br/com/tourapp/tourapp/dto/request/CadastroOrganizadorRequest.java
 package br.com.tourapp.dto.request;
 
 import jakarta.validation.constraints.Email;
@@ -2856,7 +2856,7 @@ public class CadastroOrganizadorRequest {
     public void setCnpj(String cnpj) { this.cnpj = cnpj; }
 }
 
-//src/main/java/br/com/tourapp/dto/response/AuthResponse.java
+//src/main/java/br/com/tourapp/tourapp/dto/response/AuthResponse.java
 package br.com.tourapp.dto.response;
 
 import br.com.tourapp.enums.TipoUsuario;
@@ -2899,7 +2899,7 @@ public class AuthResponse {
     public void setEmail(String email) { this.email = email; }
 }
 
-//src/main/java/br/com/tourapp/controller/AuthController.java
+//src/main/java/br/com/tourapp/tourapp/controller/AuthController.java
 package br.com.tourapp.controller;
 
 import br.com.tourapp.dto.request.CadastroClienteRequest;
@@ -2947,7 +2947,7 @@ public class AuthController {
     }
 }
 
-//src/main/java/br/com/tourapp/controller/PublicController.java
+//src/main/java/br/com/tourapp/tourapp/controller/PublicController.java
 package br.com.tourapp.controller;
 
 import br.com.tourapp.dto.request.InscricaoRequest;
@@ -2997,7 +2997,7 @@ public class PublicController {
     }
 }
 
-//src/main/java/br/com/tourapp/exception/GlobalExceptionHandler.java
+//src/main/java/br/com/tourapp/tourapp/exception/GlobalExceptionHandler.java
 package br.com.tourapp.exception;
 
 import org.springframework.http.HttpStatus;
@@ -3108,7 +3108,7 @@ public class GlobalExceptionHandler {
     }
 }
 
-//src/main/java/br/com/tourapp/exception/BusinessException.java
+//src/main/java/br/com/tourapp/tourapp/exception/BusinessException.java
 package br.com.tourapp.exception;
 
 public class BusinessException extends RuntimeException {
@@ -3117,7 +3117,7 @@ public class BusinessException extends RuntimeException {
     }
 }
 
-//src/main/java/br/com/tourapp/exception/NotFoundException.java
+//src/main/java/br/com/tourapp/tourapp/exception/NotFoundException.java
 package br.com.tourapp.exception;
 
 public class NotFoundException extends RuntimeException {
@@ -3126,7 +3126,7 @@ public class NotFoundException extends RuntimeException {
     }
 }
 
-//src/main/java/br/com/tourapp/exception/UnauthorizedException.java
+//src/main/java/br/com/tourapp/tourapp/exception/UnauthorizedException.java
 package br.com.tourapp.exception;
 
 public class UnauthorizedException extends RuntimeException {
@@ -3315,7 +3315,7 @@ CREATE TABLE notificacoes (
     public void setInscricoes(List<Inscricao> inscricoes) { this.inscricoes = inscricoes; }
 }
 
-//src/main/java/br/com/tourapp/entity/Inscricao.java
+//src/main/java/br/com/tourapp/tourapp/entity/Inscricao.java
 package br.com.tourapp.entity;
 
 import br.com.tourapp.enums.StatusPagamento;
@@ -3382,7 +3382,7 @@ public class Inscricao extends BaseEntity {
     public void setPagamentos(List<Pagamento> pagamentos) { this.pagamentos = pagamentos; }
 }
 
-//src/main/java/br/com/tourapp/entity/Pagamento.java
+//src/main/java/br/com/tourapp/tourapp/entity/Pagamento.java
 package br.com.tourapp.entity;
 
 import br.com.tourapp.enums.MetodoPagamento;
@@ -3480,7 +3480,7 @@ public class Pagamento extends BaseEntity {
     public void setObservacoes(String observacoes) { this.observacoes = observacoes; }
 }
 
-//src/main/java/br/com/tourapp/entity/Notificacao.java
+//src/main/java/br/com/tourapp/tourapp/entity/Notificacao.java
 package br.com.tourapp.entity;
 
 import br.com.tourapp.enums.TipoNotificacao;
@@ -3571,7 +3571,7 @@ public class Notificacao extends BaseEntity {
     public void setEnviada(Boolean enviada) { this.enviada = enviada; }
 }
 
-//src/main/java/br/com/tourapp/config/SecurityConfig.java
+//src/main/java/br/com/tourapp/tourapp/config/SecurityConfig.java
 package br.com.tourapp.config;
 
 import br.com.tourapp.security.JwtAuthenticationFilter;
@@ -3653,7 +3653,7 @@ public class SecurityConfig {
     }
 }
 
-//src/main/java/br/com/tourapp/security/JwtUtil.java
+//src/main/java/br/com/tourapp/tourapp/security/JwtUtil.java
 package br.com.tourapp.security;
 
 import br.com.tourapp.enums.TipoUsuario;
@@ -3752,7 +3752,7 @@ public class JwtUtil {
     }
 }
 
-//src/main/java/br/com/tourapp/security/JwtAuthenticationFilter.java
+//src/main/java/br/com/tourapp/tourapp/security/JwtAuthenticationFilter.java
 package br.com.tourapp.security;
 
 import jakarta.servlet.FilterChain;
@@ -3814,7 +3814,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 }
 
-//src/main/java/br/com/tourapp/security/CustomUserDetailsService.java
+//src/main/java/br/com/tourapp/tourapp/security/CustomUserDetailsService.java
 package br.com.tourapp.security;
 
 import br.com.tourapp.entity.Cliente;
@@ -3856,7 +3856,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 }
 
-//src/main/java/br/com/tourapp/security/SecurityUser.java
+//src/main/java/br/com/tourapp/tourapp/security/SecurityUser.java
 package br.com.tourapp.security;
 
 import br.com.tourapp.entity.Cliente;
@@ -3950,7 +3950,7 @@ public class SecurityUser implements UserDetails {
     }
 }
 
-//src/main/java/br/com/tourapp/repository/ClienteRepository.java
+//src/main/java/br/com/tourapp/tourapp/repository/ClienteRepository.java
 package br.com.tourapp.repository;
 
 import br.com.tourapp.entity.Cliente;
@@ -3968,7 +3968,7 @@ public interface ClienteRepository extends JpaRepository<Cliente, UUID> {
     boolean existsByEmail(String email);
 }
 
-//src/main/java/br/com/tourapp/repository/OrganizadorRepository.java
+//src/main/java/br/com/tourapp/tourapp/repository/OrganizadorRepository.java
 package br.com.tourapp.repository;
 
 import br.com.tourapp.entity.Organizador;
@@ -3990,7 +3990,7 @@ public interface OrganizadorRepository extends JpaRepository<Organizador, UUID> 
     List<Organizador> findByStatus(StatusOrganizador status);
 }
 
-//src/main/java/br/com/tourapp/repository/ExcursaoRepository.java
+//src/main/java/br/com/tourapp/tourapp/repository/ExcursaoRepository.java
 package br.com.tourapp.repository;
 
 import br.com.tourapp.entity.Excursao;
@@ -4024,7 +4024,7 @@ public interface ExcursaoRepository extends JpaRepository<Excursao, UUID> {
                                                    @Param("fim") LocalDateTime fim);
 }
 
-//src/main/java/br/com/tourapp/repository/InscricaoRepository.java
+//src/main/java/br/com/tourapp/tourapp/repository/InscricaoRepository.java
 package br.com.tourapp.repository;
 
 import br.com.tourapp.entity.Inscricao;
@@ -4376,7 +4376,7 @@ management:
       prometheus:
         enabled: true
 
-//src/main/java/br/com/tourapp/TourappApplication.java
+//src/main/java/br/com/tourapp/tourapp/TourappApplication.java
 package br.com.tourapp;
 
 import org.springframework.boot.SpringApplication;
@@ -4396,7 +4396,7 @@ public class TourappApplication {
     }
 }
 
-//src/main/java/br/com/tourapp/entity/BaseEntity.java
+//src/main/java/br/com/tourapp/tourapp/entity/BaseEntity.java
 package br.com.tourapp.entity;
 
 import jakarta.persistence.*;
@@ -4473,7 +4473,7 @@ public abstract class BaseEntity {
     }
 }
 
-//src/main/java/br/com/tourapp/enums/StatusOrganizador.java
+//src/main/java/br/com/tourapp/tourapp/enums/StatusOrganizador.java
 package br.com.tourapp.enums;
 
 public enum StatusOrganizador {
@@ -4493,7 +4493,7 @@ public enum StatusOrganizador {
     }
 }
 
-//src/main/java/br/com/tourapp/enums/StatusExcursao.java
+//src/main/java/br/com/tourapp/tourapp/enums/StatusExcursao.java
 package br.com.tourapp.enums;
 
 public enum StatusExcursao {
@@ -4514,7 +4514,7 @@ public enum StatusExcursao {
     }
 }
 
-//src/main/java/br/com/tourapp/enums/StatusPagamento.java
+//src/main/java/br/com/tourapp/tourapp/enums/StatusPagamento.java
 package br.com.tourapp.enums;
 
 public enum StatusPagamento {
@@ -4537,7 +4537,7 @@ public enum StatusPagamento {
     }
 }
 
-//src/main/java/br/com/tourapp/enums/MetodoPagamento.java
+//src/main/java/br/com/tourapp/tourapp/enums/MetodoPagamento.java
 package br.com.tourapp.enums;
 
 public enum MetodoPagamento {
@@ -4558,7 +4558,7 @@ public enum MetodoPagamento {
     }
 }
 
-//src/main/java/br/com/tourapp/enums/TipoNotificacao.java
+//src/main/java/br/com/tourapp/tourapp/enums/TipoNotificacao.java
 package br.com.tourapp.enums;
 
 public enum TipoNotificacao {
@@ -4580,7 +4580,7 @@ public enum TipoNotificacao {
     }
 }
 
-//src/main/java/br/com/tourapp/enums/TipoUsuario.java
+//src/main/java/br/com/tourapp/tourapp/enums/TipoUsuario.java
 package br.com.tourapp.enums;
 
 public enum TipoUsuario {
@@ -4599,7 +4599,7 @@ public enum TipoUsuario {
     }
 }
 
-//src/main/java/br/com/tourapp/entity/Cliente.java
+//src/main/java/br/com/tourapp/tourapp/entity/Cliente.java
 package br.com.tourapp.entity;
 
 import br.com.tourapp.enums.TipoUsuario;
@@ -4693,7 +4693,7 @@ public class Cliente extends BaseEntity {
     public void setInscricoes(List<Inscricao> inscricoes) { this.inscricoes = inscricoes; }
 }
 
-//src/main/java/br/com/tourapp/entity/Organizador.java
+//src/main/java/br/com/tourapp/tourapp/entity/Organizador.java
 package br.com.tourapp.entity;
 
 import br.com.tourapp.enums.StatusOrganizador;
@@ -4793,7 +4793,7 @@ public class Organizador extends BaseEntity {
     public void setExcursoes(List<Excursao> excursoes) { this.excursoes = excursoes; }
 }
 
-//src/main/java/br/com/tourapp/entity/Excursao.java
+//src/main/java/br/com/tourapp/tourapp/entity/Excursao.java
 package br.com.tourapp.entity;
 
 import br.com.tourapp.enums.StatusExcursao;
@@ -4923,7 +4923,7 @@ public interface InscricaoRepository extends JpaRepository<Inscricao, UUID> {
     long countByExcursaoId(UUID excursaoId);
 }
 
-//src/main/java/br/com/tourapp/repository/PagamentoRepository.java
+//src/main/java/br/com/tourapp/tourapp/repository/PagamentoRepository.java
 package br.com.tourapp.repository;
 
 import br.com.tourapp.entity.Pagamento;
@@ -4945,7 +4945,7 @@ public interface PagamentoRepository extends JpaRepository<Pagamento, UUID> {
     List<Pagamento> findByStatus(StatusPagamento status);
 }
 
-//src/main/java/br/com/tourapp/repository/NotificacaoRepository.java
+//src/main/java/br/com/tourapp/tourapp/repository/NotificacaoRepository.java
 package br.com.tourapp.repository;
 
 import br.com.tourapp.entity.Notificacao;
@@ -4965,7 +4965,7 @@ public interface NotificacaoRepository extends JpaRepository<Notificacao, UUID> 
     List<Notificacao> findByEnviadaFalse();
 }
 
-//src/main/java/br/com/tourapp/service/AuthService.java
+//src/main/java/br/com/tourapp/tourapp/service/AuthService.java
 package br.com.tourapp.service;
 
 import br.com.tourapp.dto.request.CadastroClienteRequest;
@@ -5132,7 +5132,7 @@ public class AuthService {
     }
 }
 
-//src/main/java/br/com/tourapp/dto/request/LoginRequest.java
+//src/main/java/br/com/tourapp/tourapp/dto/request/LoginRequest.java
 package br.com.tourapp.dto.request;
 
 import jakarta.validation.constraints.Email;
@@ -5163,7 +5163,7 @@ public class LoginRequest {
     public void setSenha(String senha) { this.senha = senha; }
 }
 
-//src/main/java/br/com/tourapp/dto/request/CadastroClienteRequest.java
+//src/main/java/br/com/tourapp/tourapp/dto/request/CadastroClienteRequest.java
 package br.com.tourapp.dto.request;
 
 import jakarta.validation.constraints.Email;
@@ -5204,7 +5204,7 @@ public class CadastroClienteRequest {
     public void setTelefone(String telefone) { this.telefone = telefone; }
 }
 
-//src/main/java/br/com/tourapp/dto/request/CadastroOrganizadorRequest.java
+//src/main/java/br/com/tourapp/tourapp/dto/request/CadastroOrganizadorRequest.java
 package br.com.tourapp.dto.request;
 
 import jakarta.validation.constraints.Email;
@@ -5264,7 +5264,7 @@ public class CadastroOrganizadorRequest {
     public void setCnpj(String cnpj) { this.cnpj = cnpj; }
 }
 
-//src/main/java/br/com/tourapp/dto/response/AuthResponse.java
+//src/main/java/br/com/tourapp/tourapp/dto/response/AuthResponse.java
 package br.com.tourapp.dto.response;
 
 import br.com.tourapp.enums.TipoUsuario;
@@ -5307,7 +5307,7 @@ public class AuthResponse {
     public void setEmail(String email) { this.email = email; }
 }
 
-//src/main/java/br/com/tourapp/controller/AuthController.java
+//src/main/java/br/com/tourapp/tourapp/controller/AuthController.java
 package br.com.tourapp.controller;
 
 import br.com.tourapp.dto.request.CadastroClienteRequest;
@@ -5355,7 +5355,7 @@ public class AuthController {
     }
 }
 
-//src/main/java/br/com/tourapp/controller/PublicController.java
+//src/main/java/br/com/tourapp/tourapp/controller/PublicController.java
 package br.com.tourapp.controller;
 
 import br.com.tourapp.dto.request.InscricaoRequest;
@@ -5405,7 +5405,7 @@ public class PublicController {
     }
 }
 
-//src/main/java/br/com/tourapp/exception/GlobalExceptionHandler.java
+//src/main/java/br/com/tourapp/tourapp/exception/GlobalExceptionHandler.java
 package br.com.tourapp.exception;
 
 import org.springframework.http.HttpStatus;
@@ -5516,7 +5516,7 @@ public class GlobalExceptionHandler {
     }
 }
 
-//src/main/java/br/com/tourapp/exception/BusinessException.java
+//src/main/java/br/com/tourapp/tourapp/exception/BusinessException.java
 package br.com.tourapp.exception;
 
 public class BusinessException extends RuntimeException {
@@ -5525,7 +5525,7 @@ public class BusinessException extends RuntimeException {
     }
 }
 
-//src/main/java/br/com/tourapp/exception/NotFoundException.java
+//src/main/java/br/com/tourapp/tourapp/exception/NotFoundException.java
 package br.com.tourapp.exception;
 
 public class NotFoundException extends RuntimeException {
@@ -5534,7 +5534,7 @@ public class NotFoundException extends RuntimeException {
     }
 }
 
-//src/main/java/br/com/tourapp/exception/UnauthorizedException.java
+//src/main/java/br/com/tourapp/tourapp/exception/UnauthorizedException.java
 package br.com.tourapp.exception;
 
 public class UnauthorizedException extends RuntimeException {
@@ -6327,7 +6327,7 @@ management:
     public void setInscricoes(List<Inscricao> inscricoes) { this.inscricoes = inscricoes; }
 }
 
-//src/main/java/br/com/tourapp/entity/Inscricao.java
+//src/main/java/br/com/tourapp/tourapp/entity/Inscricao.java
 package br.com.tourapp.entity;
 
 import br.com.tourapp.enums.StatusPagamento;
@@ -6394,7 +6394,7 @@ public class Inscricao extends BaseEntity {
     public void setPagamentos(List<Pagamento> pagamentos) { this.pagamentos = pagamentos; }
 }
 
-//src/main/java/br/com/tourapp/entity/Pagamento.java
+//src/main/java/br/com/tourapp/tourapp/entity/Pagamento.java
 package br.com.tourapp.entity;
 
 import br.com.tourapp.enums.MetodoPagamento;
@@ -6492,7 +6492,7 @@ public class Pagamento extends BaseEntity {
     public void setObservacoes(String observacoes) { this.observacoes = observacoes; }
 }
 
-//src/main/java/br/com/tourapp/entity/Notificacao.java
+//src/main/java/br/com/tourapp/tourapp/entity/Notificacao.java
 package br.com.tourapp.entity;
 
 import br.com.tourapp.enums.TipoNotificacao;
@@ -6583,7 +6583,7 @@ public class Notificacao extends BaseEntity {
     public void setEnviada(Boolean enviada) { this.enviada = enviada; }
 }
 
-//src/main/java/br/com/tourapp/config/SecurityConfig.java
+//src/main/java/br/com/tourapp/tourapp/config/SecurityConfig.java
 package br.com.tourapp.config;
 
 import br.com.tourapp.security.JwtAuthenticationFilter;
@@ -6665,7 +6665,7 @@ public class SecurityConfig {
     }
 }
 
-//src/main/java/br/com/tourapp/security/JwtUtil.java
+//src/main/java/br/com/tourapp/tourapp/security/JwtUtil.java
 package br.com.tourapp.security;
 
 import br.com.tourapp.enums.TipoUsuario;
@@ -6764,7 +6764,7 @@ public class JwtUtil {
     }
 }
 
-//src/main/java/br/com/tourapp/security/JwtAuthenticationFilter.java
+//src/main/java/br/com/tourapp/tourapp/security/JwtAuthenticationFilter.java
 package br.com.tourapp.security;
 
 import jakarta.servlet.FilterChain;
@@ -6826,7 +6826,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 }
 
-//src/main/java/br/com/tourapp/security/CustomUserDetailsService.java
+//src/main/java/br/com/tourapp/tourapp/security/CustomUserDetailsService.java
 package br.com.tourapp.security;
 
 import br.com.tourapp.entity.Cliente;
@@ -6868,7 +6868,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 }
 
-//src/main/java/br/com/tourapp/security/SecurityUser.java
+//src/main/java/br/com/tourapp/tourapp/security/SecurityUser.java
 package br.com.tourapp.security;
 
 import br.com.tourapp.entity.Cliente;
@@ -6962,7 +6962,7 @@ public class SecurityUser implements UserDetails {
     }
 }
 
-//src/main/java/br/com/tourapp/repository/ClienteRepository.java
+//src/main/java/br/com/tourapp/tourapp/repository/ClienteRepository.java
 package br.com.tourapp.repository;
 
 import br.com.tourapp.entity.Cliente;
@@ -6980,7 +6980,7 @@ public interface ClienteRepository extends JpaRepository<Cliente, UUID> {
     boolean existsByEmail(String email);
 }
 
-//src/main/java/br/com/tourapp/repository/OrganizadorRepository.java
+//src/main/java/br/com/tourapp/tourapp/repository/OrganizadorRepository.java
 package br.com.tourapp.repository;
 
 import br.com.tourapp.entity.Organizador;
@@ -7002,7 +7002,7 @@ public interface OrganizadorRepository extends JpaRepository<Organizador, UUID> 
     List<Organizador> findByStatus(StatusOrganizador status);
 }
 
-//src/main/java/br/com/tourapp/repository/ExcursaoRepository.java
+//src/main/java/br/com/tourapp/tourapp/repository/ExcursaoRepository.java
 package br.com.tourapp.repository;
 
 import br.com.tourapp.entity.Excursao;
@@ -7036,7 +7036,7 @@ public interface ExcursaoRepository extends JpaRepository<Excursao, UUID> {
                                                    @Param("fim") LocalDateTime fim);
 }
 
-//src/main/java/br/com/tourapp/repository/InscricaoRepository.java
+//src/main/java/br/com/tourapp/tourapp/repository/InscricaoRepository.java
 package br.com.tourapp.repository;
 
 import br.com.tourapp.entity.Inscricao;
@@ -7388,7 +7388,7 @@ management:
       prometheus:
         enabled: true
 
-//src/main/java/br/com/tourapp/TourappApplication.java
+//src/main/java/br/com/tourapp/tourapp/TourappApplication.java
 package br.com.tourapp;
 
 import org.springframework.boot.SpringApplication;
@@ -7408,7 +7408,7 @@ public class TourappApplication {
     }
 }
 
-//src/main/java/br/com/tourapp/entity/BaseEntity.java
+//src/main/java/br/com/tourapp/tourapp/entity/BaseEntity.java
 package br.com.tourapp.entity;
 
 import jakarta.persistence.*;
@@ -7485,7 +7485,7 @@ public abstract class BaseEntity {
     }
 }
 
-//src/main/java/br/com/tourapp/enums/StatusOrganizador.java
+//src/main/java/br/com/tourapp/tourapp/enums/StatusOrganizador.java
 package br.com.tourapp.enums;
 
 public enum StatusOrganizador {
@@ -7505,7 +7505,7 @@ public enum StatusOrganizador {
     }
 }
 
-//src/main/java/br/com/tourapp/enums/StatusExcursao.java
+//src/main/java/br/com/tourapp/tourapp/enums/StatusExcursao.java
 package br.com.tourapp.enums;
 
 public enum StatusExcursao {
@@ -7526,7 +7526,7 @@ public enum StatusExcursao {
     }
 }
 
-//src/main/java/br/com/tourapp/enums/StatusPagamento.java
+//src/main/java/br/com/tourapp/tourapp/enums/StatusPagamento.java
 package br.com.tourapp.enums;
 
 public enum StatusPagamento {
@@ -7549,7 +7549,7 @@ public enum StatusPagamento {
     }
 }
 
-//src/main/java/br/com/tourapp/enums/MetodoPagamento.java
+//src/main/java/br/com/tourapp/tourapp/enums/MetodoPagamento.java
 package br.com.tourapp.enums;
 
 public enum MetodoPagamento {
@@ -7570,7 +7570,7 @@ public enum MetodoPagamento {
     }
 }
 
-//src/main/java/br/com/tourapp/enums/TipoNotificacao.java
+//src/main/java/br/com/tourapp/tourapp/enums/TipoNotificacao.java
 package br.com.tourapp.enums;
 
 public enum TipoNotificacao {
@@ -7592,7 +7592,7 @@ public enum TipoNotificacao {
     }
 }
 
-//src/main/java/br/com/tourapp/enums/TipoUsuario.java
+//src/main/java/br/com/tourapp/tourapp/enums/TipoUsuario.java
 package br.com.tourapp.enums;
 
 public enum TipoUsuario {
@@ -7611,7 +7611,7 @@ public enum TipoUsuario {
     }
 }
 
-//src/main/java/br/com/tourapp/entity/Cliente.java
+//src/main/java/br/com/tourapp/tourapp/entity/Cliente.java
 package br.com.tourapp.entity;
 
 import br.com.tourapp.enums.TipoUsuario;
@@ -7705,7 +7705,7 @@ public class Cliente extends BaseEntity {
     public void setInscricoes(List<Inscricao> inscricoes) { this.inscricoes = inscricoes; }
 }
 
-//src/main/java/br/com/tourapp/entity/Organizador.java
+//src/main/java/br/com/tourapp/tourapp/entity/Organizador.java
 package br.com.tourapp.entity;
 
 import br.com.tourapp.enums.StatusOrganizador;
@@ -7805,7 +7805,7 @@ public class Organizador extends BaseEntity {
     public void setExcursoes(List<Excursao> excursoes) { this.excursoes = excursoes; }
 }
 
-//src/main/java/br/com/tourapp/entity/Excursao.java
+//src/main/java/br/com/tourapp/tourapp/entity/Excursao.java
 package br.com.tourapp.entity;
 
 import br.com.tourapp.enums.StatusExcursao;
