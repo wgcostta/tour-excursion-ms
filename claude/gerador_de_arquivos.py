@@ -17,7 +17,7 @@ def criar_arquivos_com_conteudo(caminho_arquivo_entrada):
             for numero_linha, linha in enumerate(f, 1):
                 linha_limpa = linha.strip()
 
-                if linha_limpa.startswith('//'):
+                if linha.rstrip('\n\r').startswith('//'):
                     # Se estamos processando um arquivo anterior, salvamos o conteúdo
                     if caminho_atual_arquivo:
                         salvar_arquivo(caminho_atual_arquivo, "".join(conteudo_atual))
