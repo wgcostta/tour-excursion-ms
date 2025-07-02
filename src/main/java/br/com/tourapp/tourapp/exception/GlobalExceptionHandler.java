@@ -184,7 +184,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex, WebRequest request) {
         // Log da exceção para debug (em produção usar logger adequado)
-        System.err.println("RuntimeException capturada: " + ex.getMessage());
+        logger.error("RuntimeException capturada: " + ex.getMessage());
         ex.printStackTrace();
 
         ErrorResponse error = new ErrorResponse(
@@ -202,7 +202,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex, WebRequest request) {
         // Log da exceção para debug
-        System.err.println("Exceção global capturada: " + ex.getMessage());
+        logger.error("Exceção global capturada: " + ex.getMessage());
         ex.printStackTrace();
 
         ErrorResponse error = new ErrorResponse(

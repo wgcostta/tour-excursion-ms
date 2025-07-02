@@ -56,7 +56,7 @@ public class CloudinaryService {
             cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
         } catch (IOException e) {
             // Log error but don't throw - deletion failure shouldn't break the flow
-            System.err.println("Erro ao deletar imagem: " + e.getMessage());
+            logger.error("Erro ao deletar imagem: " + e.getMessage());
         }
     }
 }

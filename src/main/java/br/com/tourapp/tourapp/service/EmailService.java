@@ -47,7 +47,7 @@ public class EmailService {
             );
         } catch (Exception e) {
             // Log error but don't throw - email failure shouldn't break the flow
-            System.err.println("Erro ao enviar email de confirmação de inscrição: " + e.getMessage());
+            logger.error("Erro ao enviar email de confirmação de inscrição: " + e.getMessage());
         }
     }
 
@@ -68,7 +68,7 @@ public class EmailService {
                     htmlContent
             );
         } catch (Exception e) {
-            System.err.println("Erro ao enviar email de confirmação de pagamento: " + e.getMessage());
+            logger.error("Erro ao enviar email de confirmação de pagamento: " + e.getMessage());
         }
     }
 
@@ -86,7 +86,7 @@ public class EmailService {
                 enviarEmail(email, notificacao.getTitulo(), htmlContent);
             }
         } catch (Exception e) {
-            System.err.println("Erro ao enviar notificação personalizada: " + e.getMessage());
+            logger.error("Erro ao enviar notificação personalizada: " + e.getMessage());
         }
     }
 

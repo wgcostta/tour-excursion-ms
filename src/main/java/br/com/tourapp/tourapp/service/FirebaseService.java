@@ -23,7 +23,7 @@ public class FirebaseService {
 
             FirebaseMessaging.getInstance().send(message);
         } catch (Exception e) {
-            System.err.println("Erro ao enviar notificação push: " + e.getMessage());
+            logger.error("Erro ao enviar notificação push: " + e.getMessage());
         }
     }
 
@@ -45,7 +45,7 @@ public class FirebaseService {
 
             FirebaseMessaging.getInstance().sendMulticast(message);
         } catch (Exception e) {
-            System.err.println("Erro ao enviar notificações push múltiplas: " + e.getMessage());
+            logger.error("Erro ao enviar notificações push múltiplas: " + e.getMessage());
         }
     }
 }
